@@ -4,8 +4,8 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 entity fadd is
   Port ( clk   : in std_logic;
-         inputA : in std_logic_vector (31 downto 0);
-         inputB : in std_logic_vector (31 downto 0);
+         A : in std_logic_vector (31 downto 0);
+         B : in std_logic_vector (31 downto 0);
          result: out std_logic_vector(31 downto 0));
 
 end fadd;
@@ -75,8 +75,8 @@ architecture adder of fadd is
   end component;
 begin
 
-  dataA <= inputA;
-  dataB <= inputB;
+  dataA <= A;
+  dataB <= B;
 
   exception: exception_handler
   port map(
