@@ -4,7 +4,6 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 entity fadd is
   Port ( clk   : in std_logic;
-         go    : in std_logic;
          inputA : in std_logic_vector (31 downto 0);
          inputB : in std_logic_vector (31 downto 0);
          result: out std_logic_vector(31 downto 0));
@@ -76,13 +75,9 @@ architecture adder of fadd is
   end component;
 begin
 
-  start: process(clk) begin
-    if rising_edge(clk) and (go = '1')then
-      dataA <= inputA;
-      dataB <= inputB;
-    end if;
-  end process;
- 
+  dataA <= inputA;
+  dataB <= inputB;
+
   exception: exception_handler
   port map(
     dataA => dataA,
@@ -118,7 +113,7 @@ begin
     loser_frac => loser_frac,
     frac_out => frac_sum,
     minus_frag => sign_reverse);
-          
+
   find_msb: msb_finder
   port map(
     data => frac_sum,
