@@ -85,7 +85,13 @@ begin
       dataO(31 downto 1) <= SHR(dataI(31 downto 1),
         conv_std_logic_vector(shift, 10));
 
-      if dataI((shift - 1) downto 0) = 0 then
+      if shift >= 32 then
+        if dataI = 0 then
+          dataO(0) <= '0';
+        else
+          dataO(0) <= '1';
+        end if;
+      elsif dataI(shift downto 0) = 0 then
         dataO(0) <= '0';
       else
         dataO(0) <= '1';
