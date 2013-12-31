@@ -31,13 +31,16 @@ architecture main of normalizer is
   signal rounded_frac : std_logic_vector(27 downto 0);
   signal reshifted_frac : std_logic_vector(23 downto 0);
   signal rounded_exp  : std_logic_vector(9 downto 0);
+
+  alias shift_direction : std_logic is shift(5);
+  alias shift_amount : std_logic_vector(4 downto 0) is shift(4 downto 0);
 begin
   left_shift: bshifter_left
   port map(
     dataI(31 downto 28) => "0000",
     dataI(27 downto 0) => frac,
     op(7 downto 5) => "000",
-    op(4 downto 0)    => shift(4 downto 0),
+    op(4 downto 0)    => shift_amount,
     dataO => left_shift_frac);
 
   right_shift: bshifter_right
@@ -45,17 +48,17 @@ begin
     dataI(31 downto 28) => "0000",
     dataI(27 downto 0) => frac,
     op(7 downto 5) => "000",
-    op(4 downto 0)    => shift(4 downto 0),
+    op(4 downto 0)    => shift_amount,
     dataO => right_shift_frac);
 
   shift_selector: process(left_shift_frac, right_shift_frac, exp, shift) begin
-    case shift(5) is
+    case shift_direction is
       when '0' => 
         shift_frac <= left_shift_frac(27 downto 0);
-        normalized_exp <= ("00" & exp) - shift(4 downto 0);
+        normalized_exp <= ("00" & exp) - shift_amount;
       when others => 
         shift_frac <= right_shift_frac(27 downto 0);
-        normalized_exp <= ("00" & exp) + shift(4 downto 0);
+        normalized_exp <= ("00" & exp) + shift_amount;
     end case;
   end process;
 
