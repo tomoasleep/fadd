@@ -108,10 +108,10 @@ begin
 
   fix_frac: bshifter_right 
   port map(
-    dataI(31 downto 27) => "00000",
+    dataI(31 downto 27) => (others => '0'),
     dataI(26) => '1',
     dataI(25 downto 3)  => loser(22 downto 0),
-    dataI(2 downto 0)   => "000",
+    dataI(2 downto 0)   => (others => '0'),
     op => exp_sub,
     dataO(31 downto 27) => notuse,
     dataO(26 downto 0) => loser_frac);
@@ -133,7 +133,7 @@ begin
     loser_sign => st1_loser(31),
     winner_frac(26) => '1',
     winner_frac(25 downto 3) => st1_winner(22 downto 0),
-    winner_frac(2 downto 0) => "000",
+    winner_frac(2 downto 0) => (others => '0'),
     loser_frac => st1_loser_fraction_adder,
     frac_out => frac_sum,
     minus_frag => sign_reverse);
