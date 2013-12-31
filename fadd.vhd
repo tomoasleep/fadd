@@ -27,7 +27,20 @@ architecture adder of fadd is
 
   signal exception_result : std_logic_vector(31 downto 0);
   signal exception_flag : std_logic;
-  -- signal result_sign : std_logic; 
+
+  signal st1_exception_result     : std_logic_vector(31 downto 0);
+  signal st1_exception_flag       : std_logic;
+  signal st1_exp_sub              : std_logic_vector(7 downto 0);
+  signal st1_winner               : std_logic_vector(31 downto 0);
+  signal st1_loser                : std_logic_vector(31 downto 0);
+  signal st1_loser_fraction_adder : std_logic_vector(26 downto 0);
+
+  signal st2_exception_result     : std_logic_vector(31 downto 0);
+  signal st2_exception_flag       : std_logic;
+  signal st2_fraction_sum         : std_logic_vector(27 downto 0);
+  signal st2_winner               : std_logic_vector(31 downto 0);
+  signal st2_shift_amount         : std_logic_vector(5 downto 0);
+  signal st2_sign_reverse         : std_logic;
 
   signal notuse : std_logic_vector(4 downto 0);
 
@@ -103,14 +116,25 @@ begin
     dataO(31 downto 27) => notuse,
     dataO(26 downto 0) => loser_frac);
 
+  latch_1: process(clk) begin
+    if rising_edge(clk) then
+      st1_exception_result      <= exception_result;
+      st1_exception_flag        <= exception_flag;
+      st1_exp_sub               <= exp_sub;
+      st1_winner                <= winner;
+      st1_loser                 <= loser;
+      st1_loser_fraction_adder  <= loser_frac;
+    end if;
+  end process;
+
   frac_add: frac_adder
   port map(
-    winner_sign => winner(31),
-    loser_sign => loser(31),
+    winner_sign => st1_winner(31),
+    loser_sign => st1_loser(31),
     winner_frac(26) => '1',
-    winner_frac(25 downto 3) => winner(22 downto 0),
+    winner_frac(25 downto 3) => st1_winner(22 downto 0),
     winner_frac(2 downto 0) => "000",
-    loser_frac => loser_frac,
+    loser_frac => st1_loser_fraction_adder,
     frac_out => frac_sum,
     minus_frag => sign_reverse);
 
@@ -119,21 +143,32 @@ begin
     data => frac_sum,
     shift => shift);
 
+  latch_2: process(clk) begin
+    if rising_edge(clk) then
+      st2_exception_result      <= st1_exception_result;
+      st2_exception_flag        <= st1_exception_flag;
+      st2_fraction_sum          <= frac_sum;
+      st2_winner                <= st1_winner;
+      st2_shift_amount          <= shift;
+      st2_sign_reverse          <= sign_reverse;
+    end if;
+  end process;
+
   normalize: normalizer
   port map(
-    frac => frac_sum,
-    exp => winner(30 downto 23),
-    shift => shift,
+    frac => st2_fraction_sum,
+    exp => st2_winner(30 downto 23),
+    shift => st2_shift_amount,
     expO => normalized_result(30 downto 23),
     fracO => normalized_result(22 downto 0));
 
-  gen_result: process(winner, sign_reverse, normalized_result, 
-    exception_flag, exception_result) begin
-    if exception_flag = '0' then
-      result(31) <= winner(31) xor sign_reverse; 
+  gen_result: process(st2_winner, st2_sign_reverse, normalized_result, 
+    st2_exception_flag, st2_exception_result) begin
+    if st2_exception_flag = '0' then
+      result(31) <= st2_winner(31) xor st2_sign_reverse; 
       result(30 downto 0) <= normalized_result;
     else
-      result <= exception_result;
+      result <= st2_exception_result;
     end if;
   end process;
 end adder;
