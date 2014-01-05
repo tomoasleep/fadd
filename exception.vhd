@@ -10,6 +10,7 @@ entity exception_handler is
 end exception_handler;
 
 architecture main of exception_handler is
+  constant zero : std_logic_vector(31 downto 0) := (others => '0');
   constant exp_max : std_logic_vector(7 downto 0) := (others => '1');
   constant pos_inf : std_logic_vector(31 downto 0)
     := (31 => '0', 30 downto 23 => '1', 22 downto 0 => '0');
@@ -17,6 +18,7 @@ architecture main of exception_handler is
     := (31 => '1', 30 downto 23 => '1', 22 downto 0 => '0');
   constant nan_value : std_logic_vector(31 downto 0) := (others => '1');
 
+  signal is_all_zero : std_logic := '0';
   signal is_zero_A : std_logic := '0';
   signal is_zero_B : std_logic := '0';
 
@@ -83,8 +85,11 @@ begin
   isnt_pos_inf <= (not is_pos_inf_A) and (not is_pos_inf_B);
   isnt_neg_inf <= (not is_neg_inf_A) and (not is_neg_inf_B);
 
+  is_all_zero <= is_zero_A and is_zero_B;
+
   flag <= is_exception_A or is_exception_B;
-  result <= dataB   when is_zero_A = '1' else
+  result <= zero    when is_all_zero = '1' else
+            dataB   when is_zero_A = '1' else
             dataA   when is_zero_B = '1' else
             dataA   when (is_nan_A or is_non_regular_A) = '1' else
             dataB   when (is_nan_B or is_non_regular_B) = '1' else
