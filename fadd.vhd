@@ -165,7 +165,11 @@ begin
   gen_result: process(st2_winner, st2_sign_reverse, normalized_result, 
     st2_exception_flag, st2_exception_result) begin
     if st2_exception_flag = '0' then
-      result(31) <= st2_winner(31) xor st2_sign_reverse; 
+      if st2_sign_reverse = '1' then
+        result(31) <= not st2_winner(31);
+      else
+        result(31) <= st2_winner(31);
+      end if;
       result(30 downto 0) <= normalized_result;
     else
       result <= st2_exception_result;
