@@ -2,14 +2,14 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
-entity exception_handler is
+entity fadd_exception_handler is
   Port ( dataA  : in std_logic_vector(31 downto 0); 
          dataB  : in std_logic_vector(31 downto 0);
          flag   : out std_logic;
          result : out std_logic_vector(31 downto 0));
-end exception_handler;
+end fadd_exception_handler;
 
-architecture main of exception_handler is
+architecture main of fadd_exception_handler is
   constant zero : std_logic_vector(31 downto 0) := (others => '0');
   constant exp_max : std_logic_vector(7 downto 0) := (others => '1');
   constant pos_inf : std_logic_vector(31 downto 0)

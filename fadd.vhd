@@ -44,7 +44,7 @@ architecture adder of fadd is
 
   signal notuse : std_logic_vector(4 downto 0);
 
-  component exception_handler
+  component fadd_exception_handler
     Port ( dataA  : in std_logic_vector(31 downto 0); 
            dataB  : in std_logic_vector(31 downto 0);
            flag   : out std_logic;
@@ -91,7 +91,7 @@ begin
   dataA <= A;
   dataB <= B;
 
-  exception: exception_handler
+  exception: fadd_exception_handler
   port map(
     dataA => dataA,
     dataB => dataB,
