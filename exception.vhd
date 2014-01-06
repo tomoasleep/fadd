@@ -61,8 +61,8 @@ begin
   is_exp_max_A <= '1' when dataA(30 downto 23) = exp_max else '0';
   is_exp_max_B <= '1' when dataB(30 downto 23) = exp_max else '0';
   
-  is_zero_A <= '1' when dataA(30 downto 0) = 0 else '0';
-  is_zero_B <= '1' when dataB(30 downto 0) = 0 else '0';
+  is_zero_A <= '1' when dataA(30 downto 23) = 0 else '0';
+  is_zero_B <= '1' when dataB(30 downto 23) = 0 else '0';
 
   is_inf_A <= is_exp_max_A and is_frac_zero_A;
   is_inf_B <= is_exp_max_B and is_frac_zero_B;
