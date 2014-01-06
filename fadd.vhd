@@ -70,8 +70,7 @@ architecture adder of fadd is
            loser_sign  : in  std_logic;
            winner_frac : in  std_logic_vector(26 downto 0);
            loser_frac  : in  std_logic_vector(26 downto 0);
-           frac_out    : out std_logic_vector(27 downto 0);
-           minus_frag  : out std_logic);
+           frac_out    : out std_logic_vector(27 downto 0));
   end component;
 
   component msb_finder
@@ -135,8 +134,7 @@ begin
     winner_frac(25 downto 3) => st1_winner(22 downto 0),
     winner_frac(2 downto 0) => "000",
     loser_frac => st1_loser_fraction_adder,
-    frac_out => frac_sum,
-    minus_frag => sign_reverse);
+    frac_out => frac_sum);
 
   find_msb: msb_finder
   port map(
@@ -150,7 +148,6 @@ begin
       st2_fraction_sum          <= frac_sum;
       st2_winner                <= st1_winner;
       st2_shift_amount          <= shift;
-      st2_sign_reverse          <= sign_reverse;
     end if;
   end process;
 
@@ -165,11 +162,7 @@ begin
   gen_result: process(st2_winner, st2_sign_reverse, normalized_result, 
     st2_exception_flag, st2_exception_result) begin
     if st2_exception_flag = '0' then
-      if st2_sign_reverse = '1' then
-        result(31) <= not st2_winner(31);
-      else
-        result(31) <= st2_winner(31);
-      end if;
+      result(31) <= st2_winner(31);
       result(30 downto 0) <= normalized_result;
     else
       result <= st2_exception_result;
