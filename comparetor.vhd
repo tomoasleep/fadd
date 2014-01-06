@@ -13,7 +13,7 @@ end comparetor;
 architecture compare of comparetor is
 begin
 main: process(dataA, dataB) begin
-    if dataA(30 downto 23) < dataB(30 downto 23) then
+    if dataA(30 downto 0) < dataB(30 downto 0) then
       winner <= dataB;
       loser <= dataA;
       exp_sub <= dataB(30 downto 23) - dataA(30 downto 23);
